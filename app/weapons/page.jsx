@@ -12,25 +12,43 @@ export default async function WeaponList({ searchParams }) {
   const country = searchParams.country || "";
   const page = Number(searchParams.page) || 1;
 
-  await connectDB();
+  let countries = [];
+  let types = [];
+  let weapons = [];
+  let pagination = { totalPages: 1, currentPage: 1 };
 
-  const countries = await Country.find().sort({ name: 1 }).lean();
-  const types = await Weapon.distinct("type");
+  try {
+    await connectDB();
 
-  const query = new URLSearchParams({
-    q,
-    type,
-    country,
-    page,
-    limit: 6,
-  }).toString();
+    countries = await Country.find().sort({ name: 1 }).lean();
+    types = await Weapon.distinct("type");
 
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL || ""}/api/weapons?${query}`,
-    { cache: "no-store" }
-  );
+    const query = new URLSearchParams({
+      q,
+      type,
+      country,
+      page,
+      limit: 6,
+    }).toString();
 
-  const { data: weapons, pagination } = await res.json();
+    const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+    const res = await fetch(`${baseUrl}/api/weapons?${query}`, {
+      cache: "no-store",
+    });
+
+    if (!res.ok) {
+      throw new Error(`API error: ${res.status}`);
+    }
+
+    const data = await res.json();
+    weapons = data.data || [];
+    pagination = data.pagination || { totalPages: 1, currentPage: 1 };
+  } catch (error) {
+    console.error("Error fetching weapons:", error);
+    // Return empty state during build or database unavailability
+    weapons = [];
+    pagination = { totalPages: 1, currentPage: 1 };
+  }
 
   return (
     <main className="p-6 max-w-7xl mx-auto">

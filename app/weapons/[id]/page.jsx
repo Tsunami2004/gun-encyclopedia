@@ -3,10 +3,10 @@ import Link from "next/link";
 export default async function WeaponDetailPage({ params }) {
   const { id } = await params;
 
-  const res = await fetch(
-    `${process.env.NEXT_PUBLIC_BASE_URL || ""}/api/weapons/${id}`,
-    { cache: "no-store" }
-  );
+  const baseUrl = process.env.NEXT_PUBLIC_BASE_URL || `http://localhost:${process.env.PORT || 3000}`;
+  const res = await fetch(`${baseUrl}/api/weapons/${id}`, {
+    cache: "no-store",
+  });
 
   if (!res.ok) {
     return (
