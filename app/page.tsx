@@ -6,6 +6,10 @@ export default function Home() {
       <h1 className="text-4xl md:text-5xl font-bold mb-4 text-center">
         Gun Encyclopedia 🚀 LIVE TEST
       </h1>
+      <h2 className="text-4xl md:text-5xl font-bold mb-4 text-center">
+        Gun Encyclopedia 🚀
+      </h2>
+
 
       <p className="text-gray-400 max-w-xl text-center mb-8">
         Explore detailed information about firearms, including their origin,
